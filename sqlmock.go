@@ -57,6 +57,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"regexp"
 )
 
@@ -90,6 +91,15 @@ func init() {
 // asserted on Close.
 func New() (db *sql.DB, err error) {
 	db, err = sql.Open("mock", "")
+	if err != nil {
+		return
+	}
+	// ensure open connection, otherwise Close does not assert expectations
+	return db, db.Ping()
+}
+
+func NewSqlx() (db *sqlx.DB, err error) {
+	db, err = sqlx.Open("mock", "")
 	if err != nil {
 		return
 	}
